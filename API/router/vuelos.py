@@ -45,3 +45,5 @@ async def put_vuelo(data_update: VueloSchema, id: str):
         conn.execute(vuelos.update().values(usuario_id=data_update.usuario_id, avion_Id=data_update.avion_Id, inicio=data_update.inicio, fin=data_update.fin,origen=data_update.origen, destino=data_update.destino,tiempoVuelo=data_update.tiempoVuelo).where(vuelos.c.id == id))
         return Response(status_code=HTTP_200_OK)
         
+        
+#ok
