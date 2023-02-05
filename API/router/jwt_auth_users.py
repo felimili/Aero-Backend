@@ -8,7 +8,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
 ALGORITHM = "HS256"
-ACCESS_TOKEN_DURATION = 90
+ACCESS_TOKEN_DURATION = 1
 SECRET = "GN20FDX6c9HEOAi5oSHNssAuI4bvhUfRBRRseow"
 
 auth_jwt = APIRouter()
@@ -36,14 +36,15 @@ async def auth_user(token: str = Depends(oauth2)):
         headers={"www-Authenticate": "Bearer"}) 
     
     try:
+        
         username = jwt.decode(token, SECRET, algorithms=[ALGORITHM]).get("sub")
         
         if username is None:
             raise execption
-
+    
     except JWTError:
             raise execption
-
+    
     return search_user(username)
 
 
@@ -51,7 +52,7 @@ async def auth_user(token: str = Depends(oauth2)):
 @auth_jwt.post ("/api/login")
 async def login(form: OAuth2PasswordRequestForm = Depends()):
     username = search_user(form.username)
-    print('llego un Login') 
+    
     check_pass = check_password_hash(username[2], form.password)  
                
     if not check_pass:
