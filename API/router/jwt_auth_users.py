@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from starlette.status import HTTP_202_ACCEPTED,HTTP_401_UNAUTHORIZED
 from jose import jwt, JWTError
 from config.db import engine
 from model.users import users
@@ -8,7 +9,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
 ALGORITHM = "HS256"
-ACCESS_TOKEN_DURATION = 1
+ACCESS_TOKEN_DURATION = 5
 SECRET = "GN20FDX6c9HEOAi5oSHNssAuI4bvhUfRBRRseow"
 
 auth_jwt = APIRouter()
@@ -46,6 +47,20 @@ async def auth_user(token: str = Depends(oauth2)):
             raise execption
     
     return search_user(username)
+
+@auth_jwt.get ("/api/check_sesion")
+async def check(token: str = Depends(oauth2)):
+      
+    try:
+            
+        valido = jwt.decode(token, SECRET, algorithms=[ALGORITHM]).get("sub")
+               
+    except JWTError:
+            return Response(status_code=HTTP_401_UNAUTHORIZED)
+    
+    return Response(status_code=HTTP_202_ACCEPTED)
+
+
 
 
 
