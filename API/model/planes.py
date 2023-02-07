@@ -1,14 +1,18 @@
 from sqlalchemy import Table, Column
 from sqlalchemy.sql.sqltypes import Integer, String, BOOLEAN
-from config.db import engine, meta_data
+from config.db import Base
 
 
 
-planes = Table("planes", meta_data,
-            Column("id", Integer, primary_key=True),
-            Column("matricula", String(6), nullable=False ),
-            Column("marca", String(50), nullable=False),
-            Column("modelo", String(50), nullable=False))
-            #Column("afectadoEscuela", BOOLEAN, nullable=False))
+class planes(Base): 
+    __tablename__ = "planes"
+    id = Column(Integer, primary_key=True, index = True)
+    matricula = Column(String(6), nullable=False )
+    marca = Column(String(50), nullable=False)
+    modelo = Column(String(50), nullable=False)
+    
+    
+    
+# Column("afectadoEscuela", BOOLEAN, nullable=False)
 
-meta_data.create_all(engine)
+# meta_data.create_all(engine)

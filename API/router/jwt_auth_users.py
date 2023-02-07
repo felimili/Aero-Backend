@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from starlette.status import HTTP_202_ACCEPTED,HTTP_401_UNAUTHORIZED
 from jose import jwt, JWTError
-from config.db import engine
+from config.db import engine, sessionmaker
+from fastapi.encoders import jsonable_encoder
 from model.users import users
 from werkzeug.security import check_password_hash
 from passlib.context import CryptContext
@@ -19,15 +20,21 @@ crypt = CryptContext(schemes=["bcrypt"])
 oauth2 = OAuth2PasswordBearer(tokenUrl="login")
 
 def search_user(username: str):
+    user_find = users()
+    session = sessionmaker(engine)   
+    session = session()  
     
-    with engine.connect() as conn:
-        result = conn.execute(users.select().where(users.c.username == username)).first()
-        
-        
-        if not result:
+    user_find = session.query(users).filter(users.username == username).first()
+    
+    if not user_find:
             raise HTTPException(status_code=400, detail="Usuario no es correcto")
+    
+    return user_find
         
-        return result
+    #with engine.connect() as conn:
+    #    result = conn.execute(users.select().where(users.c.username == username)).first()
+              
+    #    return result
 
 async def auth_user(token: str = Depends(oauth2)):
     
@@ -66,14 +73,15 @@ async def check(token: str = Depends(oauth2)):
 
 @auth_jwt.post ("/api/login")
 async def login(form: OAuth2PasswordRequestForm = Depends()):
-    username = search_user(form.username)
+    user_check = users()
+    user_check = search_user(form.username)
     
-    check_pass = check_password_hash(username[2], form.password)  
+    check_pass = check_password_hash(user_check.password, form.password)  
                
     if not check_pass:
        raise HTTPException(status_code=401, detail="Constraseña no es correcta")
         
-    access_token ={"sub": username[1],
+    access_token ={"sub": user_check.username,
                        "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_DURATION) }
 
     #refresh_token ={"sub": username[1], "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_DURATION) }
