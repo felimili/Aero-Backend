@@ -1,6 +1,7 @@
 from sqlalchemy import Table, Column, ForeignKey
 from sqlalchemy.sql.sqltypes import Integer, String, Float, DateTime
-from config.db import Base
+from config.db import Base,engine
+from sqlalchemy.orm import relationship
 
 class vuelos(Base):
     __tablename__ = "vuelos"
@@ -12,5 +13,8 @@ class vuelos(Base):
     tiempovuelo= Column(Float, nullable=False)
     origen = Column(String(5), nullable=False)
     destino = Column(String(5), nullable=False)
+    #users = relationship("users", back_populates = "uservuelo")
+    #planes = relationship("planes", back_populates = "planevuelo")
+    
 
-#meta_data.create_all(engine)
+    Base.metadata.create_all(bind=engine)

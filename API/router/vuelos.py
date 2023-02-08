@@ -56,7 +56,7 @@ async def create_vuelo(data_vuelo: VueloSchema):
     new_vuelo.fin = data_vuelo.fin
     new_vuelo.origen = data_vuelo.origen
     new_vuelo.destino = data_vuelo.destino
-    new_vuelo.tiempoVuelo = data_vuelo.tiempoVuelo
+    new_vuelo.tiempovuelo = data_vuelo.tiempovuelo
     
     session = sessionmaker(engine)
     session = session()

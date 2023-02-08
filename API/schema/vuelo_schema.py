@@ -4,11 +4,11 @@ from datetime import datetime
 
 class VueloSchema(BaseModel):
         id: Optional [int]
-        usuario_id: str
+        usuario_id: int
         avion_Id: int
         inicio: str
         fin: str
-        tiempoVuelo: float
+        tiempovuelo: float
         origen: str
         destino: str
 
